@@ -1,6 +1,7 @@
 package com.lks.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by likaisong on 2019/2/24.
@@ -10,6 +11,7 @@ public class User implements Serializable {
     private String name;
     private int age;
     private String county;
+    private Date date;
 
     public int getId() {
         return id;
@@ -43,8 +45,15 @@ public class User implements Serializable {
         this.county = county;
     }
 
+    public Date getDate() {
+        return date;
+    }
+    public void setDate(Date date) {
+        this.date= date;
+    }
+
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", age=" + age + ", county=" + county + "]";
+        return "User [id=" + id + ", name=" + name + ", age=" + age + ", county=" + county + ", date=" + date + "]";
     }
 }

@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的-->
 <mapper namespace="userMapper">
+    <resultMap type="com.lks.domain.User" id="booleanToString">
+        <id property="users" column="tname" />
+        <result property="sex" column="sex" javaType="Boolean" jdbcType="CHAR"/>
+    </resultMap>
+
     <!-- 在select标签中编写查询的SQL语句， 设置select标签的id属性为getUser，同一个namespace下id属性值必须是唯一的
     使用parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型-->
     <select id="getUser" parameterType="int"
@@ -25,4 +30,18 @@
         delete from users where id = #{id}
     </delete>
 
+    <!--类型转换-->
+    <insert id="dateToString" parameterType="com.lks.domain.User" useGeneratedKeys="true" keyProperty="id">
+        insert into users (id, name, age, county, date)
+        values (#{id},#{name},#{age},#{county},#{date, typeHandler=com.lks.handler.DateToStringTypeHandler})
+    </insert>
+
+    <resultMap id="userResultMap" type="com.lks.domain.User">
+        <result property="date" column="date" typeHandler="com.lks.handler.DateToStringTypeHandler"/>
+    </resultMap>
+
+    <select id="stringToDate" parameterType="int"
+            resultType="com.lks.domain.User" resultMap="userResultMap">
+        select * from users where id=#{id}
+    </select>
 </mapper>

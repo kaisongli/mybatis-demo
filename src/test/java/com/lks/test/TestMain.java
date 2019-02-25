@@ -6,11 +6,11 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 /**
  * Created by likaisong on 2019/2/24.
@@ -164,6 +164,49 @@ public class TestMain {
             //再删除刚加的数据
             mapper.deleteUser(user.getId());
             session.commit();
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public static void testDateToString(){
+        String resource = "mybatis-config.xml";
+        SqlSession session = getSqlSession(resource);
+        try {
+            String statement = "userMapper.dateToString";
+            User user = new User();
+            user.setName("阿飞");
+            user.setAge(20);
+            user.setCounty("中国");
+            user.setDate(new Date());
+            session.insert(statement, user);
+            session.commit();
+            System.out.println("插入数据后返回的自增ID：" + user.getId());
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public static void testStringToDate(){
+        String resource = "mybatis-config.xml";
+        SqlSession session = getSqlSession(resource);
+        try {
+            //先插入一条数据
+            String insertStatement = "userMapper.dateToString";
+            User user = new User();
+            user.setName("阿飞");
+            user.setAge(20);
+            user.setCounty("中国");
+            user.setDate(new Date());
+            session.insert(insertStatement, user);
+            session.commit();
+            System.out.println("插入数据后返回的自增ID：" + user.getId());
+            //查询刚插入的数据
+            String selectStatement = "userMapper.stringToDate";
+            User resUser = session.selectOne(selectStatement, user.getId());
+            System.out.println(resUser);
         } finally {
             session.close();
         }
