@@ -202,9 +202,18 @@ public class TestMain {
         System.out.println(user);
     }
 
+    @Test
+    public static void testChooseTable() {
+        String resource = "mybatis-annotation-config.xml";
+        session = getSqlSession(resource);
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        User user = mapper.chooseTable("users", 1);
+        System.out.println(user);
+
+    }
+
     @AfterTest
     public static void closeSession() {
         session.close();
     }
-
 }
