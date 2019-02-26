@@ -45,4 +45,29 @@
             resultType="com.lks.domain.User" >
         select * from users where id=#{id}
     </select>
+
+    <!--resultMap 实现新字段赋值-->
+    <resultMap id="TypeChangeResultMap" type="com.lks.domain.User">
+        <constructor>
+            <arg column="age" javaType="Integer"/>
+        </constructor>
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="county" column="county"/>
+        <result property="date" column="date"/>
+    </resultMap>
+    
+    <sql id="tableAllkey">
+         id AS "id",
+         name AS "name",
+         age AS "age",
+         county AS "county",
+         date AS "date"
+    </sql>
+
+    <select id="resultMapTypeChange" parameterType="int" resultMap="TypeChangeResultMap">
+        select <include refid="tableAllkey"/> from users where id=#{id}
+    </select>
+
 </mapper>

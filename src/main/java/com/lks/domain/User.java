@@ -1,6 +1,7 @@
 package com.lks.domain;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -12,6 +13,16 @@ public class User implements Serializable {
     private int age;
     private String county;
     private Date date;
+    private Integer birthYear;
+
+    public User(){}
+
+    //resultMap 实现新字段赋值
+    public User(Integer age){
+        this.age = age;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
+        this.birthYear = Integer.valueOf(simpleDateFormat.format(new Date()))  - age;
+    }
 
     public int getId() {
         return id;
@@ -54,6 +65,6 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", age=" + age + ", county=" + county + ", date=" + date + "]";
+        return "User [id=" + id + ", name=" + name + ", age=" + age + ", county=" + county + ", date=" + date + ", birthYear=" + birthYear + "]";
     }
 }

@@ -212,6 +212,15 @@ public class TestMain {
 
     }
 
+    @Test
+    public static void testResultMapNewKey() {
+        String resource = "mybatis-config.xml";
+        session = getSqlSession(resource);
+        String statement = "userMapper.resultMapTypeChange";
+        User user = session.selectOne(statement, 23);
+        System.out.println(user);
+    }
+
     @AfterTest
     public static void closeSession() {
         session.close();
