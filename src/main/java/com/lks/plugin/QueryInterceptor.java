@@ -26,9 +26,9 @@ public class QueryInterceptor implements Interceptor {
      */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        System.out.println("被拦截方法执行前的操作。。。");
+        System.out.println("query被拦截方法执行前的操作。。。");
         Object proceed = invocation.proceed();
-        System.out.println("被拦截方法执行后的操作。。。");
+        System.out.println("query被拦截方法执行后的操作。。。");
         return proceed;
     }
 

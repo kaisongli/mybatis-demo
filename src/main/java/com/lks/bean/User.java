@@ -1,4 +1,4 @@
-package com.lks.domain;
+package com.lks.bean;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

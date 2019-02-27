@@ -1,211 +1,125 @@
 package com.lks.test;
 
-import com.lks.domain.User;
-import com.lks.mapper.UserMapper;
+import com.lks.bean.User;
+import com.lks.dao.UserMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Created by likaisong on 2019/2/24.
  */
 public class TestMain {
-    private static SqlSession session;
+    private SqlSession session;
 
-    private static SqlSession getSqlSession(String resource) {
-        if (resource == null || "".equals(resource)) {
-            return null;
-        }
+    @BeforeTest
+    private void getSqlSession() {
         InputStream inputStream = null;
         try {
-            inputStream = Resources.getResourceAsStream(resource);
+            inputStream = Resources.getResourceAsStream("mybatis-config.xml");
         } catch (IOException e) {
             e.printStackTrace();
         }
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         session = sqlSessionFactory.openSession();
-        return session;
     }
 
     @Test
-    public static void testSelectByXml() {
-        String resource = "mybatis-config.xml";
-        session = getSqlSession(resource);
-        String statement = "userMapper.getUser";
-        User user = session.selectOne(statement, 2);
+    public void testSelectByXml() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        User user = mapper.getUser(2);
         System.out.println(user);
     }
 
     @Test
-    public static void testInsertByXml() {
-        String resource = "mybatis-config.xml";
-        session = getSqlSession(resource);
-
-        String statement = "userMapper.insertUser";
+    public void testInsertByXml() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
         User user = new User();
         user.setName("阿飞");
         user.setAge(20);
         user.setCounty("中国");
-        session.insert(statement, user);
+        mapper.insertUser(user);
         session.commit();
         System.out.println("插入数据后返回的自增ID：" + user.getId());
 
     }
 
     @Test
-    public static void testUpdateByXml() {
-        String resource = "mybatis-config.xml";
-        session = getSqlSession(resource);
-
-        String statement = "userMapper.updateUser";
+    public void testUpdateByXml() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
         User user = new User();
         user.setId(1);
         user.setName("小李飞刀");
-        session.update(statement, user);
-        session.commit();
-
-    }
-
-    @Test
-    public static void testDeleteByXml() {
-        String resource = "mybatis-config.xml";
-        session = getSqlSession(resource);
-
-        //先增加一条数据
-        String insertStatement = "userMapper.insertUser";
-        User user = new User();
-        user.setName("阿飞");
-        user.setAge(20);
-        user.setCounty("中国");
-        session.insert(insertStatement, user);
-        System.out.println("插入数据后返回的自增ID：" + user.getId());
-        //再删掉刚刚加的数据
-        String deleteStatement = "userMapper.deleteUser";
-        session.delete(deleteStatement, user.getId());
-        session.commit();
-
-    }
-
-
-    @Test
-    public static void testSelectByAnnotation() {
-        String resource = "mybatis-annotation-config.xml";
-        session = getSqlSession(resource);
-
-        UserMapper mapper = session.getMapper(UserMapper.class);
-        User user = mapper.getUser(1);
-        System.out.println(user);
-
-    }
-
-    @Test
-    public static void testUpdateByAnnotation() {
-        String resource = "mybatis-annotation-config.xml";
-        session = getSqlSession(resource);
-
-        UserMapper mapper = session.getMapper(UserMapper.class);
-        User user = new User();
-        user.setId(2);
-        user.setName("钢铁侠");
         mapper.updateUser(user);
         session.commit();
 
     }
 
     @Test
-    public static void testInsertByAnnotation() {
-        String resource = "mybatis-annotation-config.xml";
-        session = getSqlSession(resource);
-
+    public void testDeleteByXml() {
         UserMapper mapper = session.getMapper(UserMapper.class);
-        User user = new User();
-        user.setName("阿飞");
-        user.setAge(20);
-        user.setCounty("中国");
-        mapper.insertUser(user);
-        session.commit();
-        System.out.println("插入数据后返回的自增ID：" + user.getId());
-
-    }
-
-    @Test
-    public static void testDeleteByAnnotation() {
-        String resource = "mybatis-annotation-config.xml";
-        session = getSqlSession(resource);
-
-        //先添加一条数据
-        UserMapper mapper = session.getMapper(UserMapper.class);
+        //先增加一条数据
         User user = new User();
         user.setName("阿飞");
         user.setAge(20);
         user.setCounty("中国");
         mapper.insertUser(user);
         System.out.println("插入数据后返回的自增ID：" + user.getId());
-        //再删除刚加的数据
+        //再删掉刚刚加的数据
         mapper.deleteUser(user.getId());
         session.commit();
 
     }
 
     @Test
-    public static void testDateToString() {
-        String resource = "mybatis-config.xml";
-        session = getSqlSession(resource);
-
-        String statement = "userMapper.dateToString";
+    public void testDateToString() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
         User user = new User();
         user.setName("阿飞");
         user.setAge(20);
         user.setCounty("中国");
         user.setDate(new Date());
-        session.insert(statement, user);
+        mapper.dateToString(user);
         session.commit();
         System.out.println("插入数据后返回的自增ID：" + user.getId());
 
     }
 
     @Test
-    public static void testStringToDate() {
-        String resource = "mybatis-config.xml";
-        session = getSqlSession(resource);
-
+    public void testStringToDate() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
         //先插入一条数据
-        String insertStatement = "userMapper.dateToString";
         User user = new User();
         user.setName("阿飞");
         user.setAge(20);
         user.setCounty("中国");
         user.setDate(new Date());
-        session.insert(insertStatement, user);
+        mapper.dateToString(user);
         session.commit();
         System.out.println("插入数据后返回的自增ID：" + user.getId());
         //查询刚插入的数据
-        String selectStatement = "userMapper.stringToDate";
-        User resUser = session.selectOne(selectStatement, user.getId());
+        User resUser = mapper.stringToDate(user.getId());
         System.out.println(resUser);
 
     }
 
     @Test
-    public static void testQueryIntercepor() {
-        String resource = "mybatis-config.xml";
-        session = getSqlSession(resource);
-        String statement = "userMapper.queryInterceptor";
-        User user = session.selectOne(statement, 1);
+    public void testQueryIntercepor() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        User user = mapper.queryInterceptor(1);
         System.out.println(user);
     }
 
     @Test
-    public static void testChooseTable() {
-        String resource = "mybatis-annotation-config.xml";
-        session = getSqlSession(resource);
+    public void testChooseTable() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         User user = mapper.chooseTable("users", 1);
         System.out.println(user);
@@ -213,16 +127,102 @@ public class TestMain {
     }
 
     @Test
-    public static void testResultMapNewKey() {
-        String resource = "mybatis-config.xml";
-        session = getSqlSession(resource);
-        String statement = "userMapper.resultMapTypeChange";
-        User user = session.selectOne(statement, 23);
+    public  void testResultMapNewKey() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        User user = mapper.resultMapTypeChange(1);
         System.out.println(user);
     }
 
+    @Test
+    public  void testDynamicSqlWhereIf() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        User user = new User();
+        user.setName("小李飞刀");
+        user.setCounty("中国");
+        User resUser = mapper.dynamicSqlWhereIf(user);
+        System.out.println(resUser);
+    }
+
+    @Test
+    public  void testDynamicSqlChoose() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        User user = new User();
+        user.setName("小李飞刀");
+        user.setCounty("中国");
+        User resUser = mapper.dynamicSqlChoose(user);
+        System.out.println(resUser);
+    }
+
+    @Test
+    public  void testUpdateSet() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        User user = new User();
+        user.setId(1);
+        user.setName("李寻欢");
+        user.setCounty("中国");
+        mapper.updateSet(user);
+        session.commit();
+    }
+
+    @Test
+    public  void testDynamicSqlTrim() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        User user = new User();
+        user.setName("阿飞");
+        user.setCounty("中国");
+        List<User> list = mapper.dynamicSqlTrim(user);
+        System.out.println(list.toString());
+    }
+
+    @Test
+    public  void testDynamicSqlInsertList() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        List<User> list = new ArrayList<User>();
+        User user = new User();
+        user.setName("楚留香");
+        user.setAge(20);
+        user.setCounty("中国");
+        user.setDate(new Date());
+        User user2 = new User();
+        user2.setName("美国队长");
+        user2.setAge(50);
+        user2.setCounty("美国");
+        user2.setDate(new Date());
+        list.add(user);
+        list.add(user2);
+        mapper.dynamicSqlInsertList(list);
+        session.commit();
+    }
+
+    @Test
+    public  void testDynamicSqlSelectList() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(1);
+        list.add(21);
+        List<User> users = mapper.dynamicSqlSelectList(list);
+        System.out.println(users.toString());
+    }
+
+    @Test
+    public  void testDynamicSqlSelectArray() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        Integer[] array = {1, 6};
+        List<User> users = mapper.dynamicSqlSelectArray(array);
+        System.out.println(users.toString());
+    }
+
+    @Test
+    public  void testDynamicSqlSelectMap() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        Map map = new HashMap();
+        map.put("name" , "阿飞");
+        List<User> users = mapper.dynamicSqlSelectMap(map);
+        System.out.println(users.toString());
+    }
+
     @AfterTest
-    public static void closeSession() {
+    public  void closeSession() {
         session.close();
     }
 }

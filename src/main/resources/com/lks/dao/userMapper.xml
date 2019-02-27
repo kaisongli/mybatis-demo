@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的-->
+<mapper namespace="com.lks.dao.UserMapper">
+    <!-- 在select标签中编写查询的SQL语句， 设置select标签的id属性为getUser，同一个namespace下id属性值必须是唯一的
+    使用parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型-->
+    <select id="getUser" parameterType="int"
+            resultType="com.lks.bean.User">
+        select * from users where id=#{id}
+    </select>
+
+    <!--useGeneratedKeys="true" keyProperty="id" 共同决定了sql执行后，会将主键封装到id属性上
+　　自增主键封装到了对象的id属性上了，那么想要获取，直接调用对象的getId()方法-->
+    <insert id="insertUser" parameterType="com.lks.bean.User"
+            flushCache="true" useGeneratedKeys="true" keyProperty="id">
+        insert into users (id,name,age,county)
+        values (#{id},#{name},#{age},#{county})
+    </insert>
+
+    <update id="updateUser" parameterType="com.lks.bean.User" flushCache="true">
+        update users set name = #{name} where id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int" flushCache="true">
+        delete from users where id = #{id}
+    </delete>
+
+    <!--类型转换-->
+    <insert id="dateToString" parameterType="com.lks.bean.User" useGeneratedKeys="true" keyProperty="id">
+        insert into users (id, name, age, county, date)
+        values (#{id},#{name},#{age},#{county},#{date, typeHandler=com.lks.handler.DateToStringTypeHandler})
+    </insert>
+
+    <resultMap id="userResultMap" type="com.lks.bean.User">
+        <result property="date" column="date" typeHandler="com.lks.handler.DateToStringTypeHandler"/>
+    </resultMap>
+
+    <select id="stringToDate" parameterType="int"
+            resultType="com.lks.bean.User" resultMap="userResultMap">
+        select * from users where id=#{id}
+    </select>
+
+    <!--自定义拦截器-->
+    <select id="queryInterceptor" parameterType="int"
+            resultType="com.lks.bean.User">
+        select * from users where id=#{id}
+    </select>
+
+    <!--resultMap 实现新字段赋值-->
+    <resultMap id="TypeChangeResultMap" type="com.lks.bean.User">
+        <constructor>
+            <arg column="age" javaType="Integer"/>
+        </constructor>
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="county" column="county"/>
+        <result property="date" column="date"/>
+    </resultMap>
+
+    <sql id="tableAllkey">
+         id AS "id",
+         name AS "name",
+         age AS "age",
+         county AS "county",
+         date AS "date"
+    </sql>
+
+    <select id="resultMapTypeChange" parameterType="int" resultMap="TypeChangeResultMap">
+        select
+        <include refid="tableAllkey"/>
+        from users where id=#{id}
+    </select>
+
+    <!--动态Sql : where / if-->
+    <select id="dynamicSqlWhereIf" resultType="com.lks.bean.User">
+        select
+        <include refid="tableAllkey"/>
+        from users
+        <where>
+            <if test="id != null and id != 0">
+                AND id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                AND name = #{name}
+            </if>
+            <if test="county != null and county != ''">
+                AND county = #{county}
+            </if>
+        </where>
+    </select>
+
+    <!--动态Sql: choose、when、otherwise 标签-->
+    <select id="dynamicSqlChoose" resultType="com.lks.bean.User">
+        select * from users
+        <where>
+            <choose>
+                <when test="name != null and name != ''">
+                    AND name = #{name}
+                </when>
+                <when test="county != null and county != ''">
+                    AND county = #{county}
+                </when>
+                <otherwise>
+                    AND id = #{id}
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <!--动态Sql: set 标签-->
+    <update id="updateSet" parameterType="com.lks.bean.User">
+        update users
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="county != null and county != ''">
+                county = #{county},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--动态Sql: trim 标签-->
+    <select id="dynamicSqlTrim" resultType="com.lks.bean.User">
+        select * from users
+        <trim prefix="where" suffix="order by age" prefixOverrides="and | or" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                AND name = #{name}
+            </if>
+            <if test="county != null and county != ''">
+                AND county = #{county}
+            </if>
+        </trim>
+    </select>
+
+    <!--动态Sql: foreach标签, list批量插入-->
+    <insert id="dynamicSqlInsertList" useGeneratedKeys="true" keyProperty="id">
+        insert into users (name, age, county, date)
+        values
+        <foreach collection="list" item="user" separator="," >
+            (#{user.name}, #{user.age}, #{user.county}, #{user.date})
+        </foreach>
+    </insert>
+
+    <!--动态Sql: foreach标签, list参数查询-->
+    <select id="dynamicSqlSelectList" resultType="com.lks.bean.User">
+        SELECT * from users WHERE id in
+        <foreach collection="list" item="id" open="(" close=")" separator="," >
+            #{id}
+        </foreach>
+    </select>
+
+    <!--动态Sql: foreach标签, array参数查询-->
+    <select id="dynamicSqlSelectArray" resultType="com.lks.bean.User">
+        select * from users WHERE id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <!--动态Sql: foreach标签, map参数查询-->
+    <select id="dynamicSqlSelectMap" resultType="com.lks.bean.User">
+        select * from users WHERE
+        <foreach collection="map" index="key" item="value"  separator="=">
+            ${key} = #{value}
+        </foreach>
+    </select>
+
+</mapper>

@@ -3,6 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <settings>
+        <!-- 打印查询语句 -->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+    </settings>
     <typeHandlers>
         <typeHandler handler="com.lks.handler.DateToStringTypeHandler" javaType="java.util.Date" jdbcType = "VARCHAR"/>
     </typeHandlers>
@@ -21,6 +25,6 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="userMapper.xml"/>
+        <package name="com.lks.dao"/>
     </mappers>
 </configuration>
