@@ -3,6 +3,7 @@ package com.lks.bean;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by likaisong on 2019/2/24.
@@ -14,6 +15,18 @@ public class User implements Serializable {
     private String county;
     private Date date;
     private Integer birthYear;
+    private List<Clothe> clothes;
+
+    private List<Role> roles;
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public List<Role> getRoles() {
+
+        return roles;
+    }
 
     public User(){}
 
@@ -63,8 +76,17 @@ public class User implements Serializable {
         this.date= date;
     }
 
+    public List<Clothe> getClothes() {
+        return clothes;
+    }
+
+    public void setClothes(List<Clothe> clothes) {
+        this.clothes = clothes;
+    }
+
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", age=" + age + ", county=" + county + ", date=" + date + ", birthYear=" + birthYear + "]";
+        return "User [id=" + id + ", name=" + name + ", age=" + age + ", county=" + county
+                + ", date=" + date + ", clothes=" + clothes +", roles=" + roles + "]";
     }
 }

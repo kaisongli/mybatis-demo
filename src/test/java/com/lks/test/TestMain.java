@@ -127,14 +127,14 @@ public class TestMain {
     }
 
     @Test
-    public  void testResultMapNewKey() {
+    public void testResultMapNewKey() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         User user = mapper.resultMapTypeChange(1);
         System.out.println(user);
     }
 
     @Test
-    public  void testDynamicSqlWhereIf() {
+    public void testDynamicSqlWhereIf() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         User user = new User();
         user.setName("小李飞刀");
@@ -144,7 +144,7 @@ public class TestMain {
     }
 
     @Test
-    public  void testDynamicSqlChoose() {
+    public void testDynamicSqlChoose() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         User user = new User();
         user.setName("小李飞刀");
@@ -154,7 +154,7 @@ public class TestMain {
     }
 
     @Test
-    public  void testUpdateSet() {
+    public void testUpdateSet() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         User user = new User();
         user.setId(1);
@@ -165,7 +165,7 @@ public class TestMain {
     }
 
     @Test
-    public  void testDynamicSqlTrim() {
+    public void testDynamicSqlTrim() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         User user = new User();
         user.setName("阿飞");
@@ -175,7 +175,7 @@ public class TestMain {
     }
 
     @Test
-    public  void testDynamicSqlInsertList() {
+    public void testDynamicSqlInsertList() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         List<User> list = new ArrayList<User>();
         User user = new User();
@@ -195,7 +195,7 @@ public class TestMain {
     }
 
     @Test
-    public  void testDynamicSqlSelectList() {
+    public void testDynamicSqlSelectList() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         List<Integer> list = new ArrayList<Integer>();
         list.add(1);
@@ -205,7 +205,7 @@ public class TestMain {
     }
 
     @Test
-    public  void testDynamicSqlSelectArray() {
+    public void testDynamicSqlSelectArray() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         Integer[] array = {1, 6};
         List<User> users = mapper.dynamicSqlSelectArray(array);
@@ -213,16 +213,52 @@ public class TestMain {
     }
 
     @Test
-    public  void testDynamicSqlSelectMap() {
+    public void testDynamicSqlSelectMap() {
         UserMapper mapper = session.getMapper(UserMapper.class);
         Map map = new HashMap();
-        map.put("name" , "阿飞");
+        map.put("name", "阿飞");
         List<User> users = mapper.dynamicSqlSelectMap(map);
         System.out.println(users.toString());
     }
 
+    @Test
+    public void testOneToMoreQuery() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        List users = mapper.oneToMoreQuery(1);
+        System.out.println(users.toString());
+    }
+
+    @Test
+    public void testOneToMoreQuery2() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        List users = mapper.oneToMoreQuery2(1);
+        System.out.println(users.toString());
+    }
+
+    @Test
+    public void testMoreToOneQuery() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        List users = mapper.moreToOneQuery(1);
+        System.out.println(users.toString());
+    }
+
+    @Test
+    public void testMoreToMoreQuery() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        List users = mapper.moreToMoreQuery(1);
+        System.out.println(users.toString());
+    }
+
+    @Test
+    public void testMoreToMoreQuery2() {
+        UserMapper mapper = session.getMapper(UserMapper.class);
+        List users = mapper.moreToMoreQuery2(1);
+        System.out.println(users.toString());
+    }
+
+
     @AfterTest
-    public  void closeSession() {
+    public void closeSession() {
         session.close();
     }
 }

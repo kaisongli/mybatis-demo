@@ -168,4 +168,116 @@
         </foreach>
     </select>
 
+    <!--一对多级联查询 resultMap-->
+    <resultMap id="oneToMoreResultMap" type="com.lks.bean.User">
+        <id column="id" property="id"></id>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="county" column="county"/>
+        <result property="date" column="date"/>
+        <!--对应一对多中一的字段名-->
+        <collection property="clothes" ofType="com.lks.bean.Clothe" column="id">
+            <id column="clothe_id" property="clotheId"></id>
+            <result column="clothe_color" property="clotheColor"></result>
+            <result column="user_id" property="userId"></result>
+        </collection>
+    </resultMap>
+
+    <select id="oneToMoreQuery" parameterType="int" resultMap="oneToMoreResultMap">
+        select id, name, age, county, date, clothe_id, clothe_color
+        FROM users join clothes on users.id = clothes.user_id
+        where users.id = #{id}
+    </select>
+
+    <!--一对多级联查询 resultMap2-->
+    <resultMap id="oneToMoreResultMap2" type="com.lks.bean.User">
+        <id column="id" property="id"></id>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="county" column="county"/>
+        <result property="date" column="date"/>
+        <!--对应一对多中一的字段名-->
+        <collection property="clothes" ofType="com.lks.bean.Clothe" column="id" select="otherQuery">
+            <id column="clothe_id" property="clotheId"></id>
+            <result column="clothe_color" property="clotheColor"></result>
+            <result column="user_id" property="userId"></result>
+        </collection>
+    </resultMap>
+
+    <select id="otherQuery" parameterType="int" resultType="com.lks.bean.Clothe">
+        select clothe_id, clothe_color
+        FROM clothes
+        where user_id = #{user_id}
+    </select>
+
+    <select id="oneToMoreQuery2" parameterType="int" resultMap="oneToMoreResultMap2">
+        select id , name, age, county, date
+        FROM users
+        where id = #{id}
+    </select>
+
+    <!--多对一级联查询 resultMap-->
+    <resultMap id="moreToOneResult" type="com.lks.bean.Clothe">
+        <id column="clothe_id" property="clotheId"></id>
+        <result column="clothe_color" property="clotheColor"></result>
+        <result column="user_id" property="userId"></result>
+
+        <!--对应多对一中多的字段名-->
+        <association property="user" javaType="com.lks.bean.User">
+            <id column="id" property="id"></id>
+            <result property="name" column="name"/>
+            <result property="age" column="age"/>
+            <result property="county" column="county"/>
+            <result property="date" column="date"/>
+        </association>
+    </resultMap>
+
+    <select id="moreToOneQuery" parameterType="int" resultMap="moreToOneResult">
+        select id, name, age, county, date, clothe_id, clothe_color
+        FROM users join clothes on users.id = clothes.user_id
+        where clothes.user_id = #{id}
+    </select>
+
+    <!--多对多级联查询 userResultMap-->
+    <resultMap id="moreToMoreResultMap" type="com.lks.bean.User">
+        <id column="id" property="id"></id>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="county" column="county"/>
+        <result property="date" column="date"/>
+        <collection property="roles" ofType="com.lks.bean.Role" column="id">
+            <id column="role_id" property="roleId"></id>
+            <result column="role_name" property="roleName"></result>
+        </collection>
+    </resultMap>
+
+    <select id="moreToMoreQuery" parameterType="int" resultMap="moreToMoreResultMap">
+        select users.id, name, age, county, date, roles.role_id, role_name
+        FROM users
+        join user_role on users.id = user_role.user_id
+        join roles on roles.role_id = user_role.role_id
+        where users.id = #{id}
+    </select>
+
+    <!--多对多级联查询 roleResultMap-->
+    <resultMap id="moreToMoreResultMap2" type="com.lks.bean.Role">
+        <id column="role_id" property="roleId"></id>
+        <result column="role_name" property="roleName"></result>
+        <collection property="users" ofType="com.lks.bean.User" column="role_id">
+            <id column="id" property="id"></id>
+            <result property="name" column="name"/>
+            <result property="age" column="age"/>
+            <result property="county" column="county"/>
+            <result property="date" column="date"/>
+        </collection>
+    </resultMap>
+
+    <select id="moreToMoreQuery2" parameterType="int" resultMap="moreToMoreResultMap2">
+        select roles.role_id, role_name, users.id, name, age, county, date
+        FROM roles
+        join user_role on roles.role_id = user_role.role_id
+        join users on users.id = user_role.user_id
+        where roles.role_id = #{role_id}
+    </select>
+
 </mapper>

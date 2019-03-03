@@ -50,4 +50,14 @@ public interface UserMapper {
 
     List dynamicSqlSelectMap(@Param("map") Map map);
 
+    List oneToMoreQuery(int id);
+
+    List oneToMoreQuery2(int id);
+
+    List moreToOneQuery(int id);
+
+    List moreToMoreQuery(int id);
+
+    List moreToMoreQuery2(int id);
+
 }
